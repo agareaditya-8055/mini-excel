@@ -13,7 +13,10 @@ export type GridRow = {
 
 export type GridColumn = ColumnDef<GridRow>;
 
-export type GridFilterState = string;
+export type GridFilterState = {
+  query: string;
+  columnId: 'all' | keyof GridRow;
+};
 
 export type GridDataState = {
   rows: GridRow[];

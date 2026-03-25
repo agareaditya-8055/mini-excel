@@ -26,7 +26,7 @@ function CellView({ cell, rowId }: Props) {
       className={`truncate border-b border-r border-slate-200 px-3 py-2 text-sm ${
         isSelected ? 'bg-blue-50 ring-1 ring-blue-400' : isEvenRow ? 'bg-white' : 'bg-slate-50/70'
       }`}
-      style={{ width: cell.column.getSize() }}
+      style={{ width: cell.column.getSize(), minWidth: 120, flexGrow: 1, flexShrink: 0 }}
     >
       {String(cell.getValue() ?? '')}
     </div>

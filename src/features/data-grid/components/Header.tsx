@@ -15,7 +15,7 @@ function HeaderView({ table }: Props) {
           type="button"
           onClick={header.column.getToggleSortingHandler()}
           className="group flex h-11 items-center border-r border-slate-200 px-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-700 transition-colors hover:bg-slate-100"
-          style={{ width: header.getSize() }}
+          style={{ width: header.getSize(), minWidth: 120, flexGrow: 1, flexShrink: 0 }}
         >
           <span className="truncate">
             {flexRender(header.column.columnDef.header, header.getContext())}

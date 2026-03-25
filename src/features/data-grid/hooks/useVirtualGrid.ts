@@ -1,4 +1,4 @@
-import { useMemo, useRef } from 'react';
+import { useEffect, useMemo, useRef } from 'react';
 import { useVirtualizer } from '@tanstack/react-virtual';
 import {
   getCoreRowModel,
@@ -39,6 +39,10 @@ export function useVirtualGrid() {
     estimateSize: () => ROW_HEIGHT,
     overscan: 12,
   });
+
+  useEffect(() => {
+    rowVirtualizer.measure();
+  }, [rowVirtualizer, tableRows.length]);
 
   return {
     table,

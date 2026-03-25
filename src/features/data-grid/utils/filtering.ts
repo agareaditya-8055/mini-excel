@@ -1,10 +1,15 @@
-import type { GridRow } from '../types/grid.types';
+import type { GridFilterState, GridRow } from '../types/grid.types';
 
-export function textFilterRow(row: GridRow, search: string): boolean {
+export function textFilterRow(row: GridRow, filter: GridFilterState): boolean {
+  const search = filter.query.trim().toLowerCase();
+
   if (!search) {
     return true;
   }
 
-  const normalized = search.toLowerCase();
-  return Object.values(row).some((value) => String(value).toLowerCase().includes(normalized));
+  if (filter.columnId === 'all') {
+    return Object.values(row).some((value) => String(value).toLowerCase().includes(search));
+  }
+
+  return String(row[filter.columnId]).toLowerCase().includes(search);
 }
