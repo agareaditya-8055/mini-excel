@@ -22,6 +22,7 @@ export function useVirtualGrid() {
   const table = useReactTable({
     data: filteredRows,
     columns,
+    getRowId: (row) => row.id,
     state: { sorting },
     onSortingChange: setSorting,
     getCoreRowModel: getCoreRowModel(),

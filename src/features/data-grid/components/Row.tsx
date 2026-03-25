@@ -13,7 +13,7 @@ function RowView({ row, top }: Props) {
     <div
       role="row"
       className="absolute left-0 flex w-full"
-      style={{ transform: `translateY(${top}px)` }}
+      style={{ transform: `translateY(${top}px)`, height: 40 }}
     >
       {row.getVisibleCells().map((cell) => (
         <Cell key={cell.id} cell={cell} rowId={row.id} />

@@ -1,5 +1,5 @@
 import { memo, useCallback } from 'react';
-import { flexRender, type Cell as TableCell } from '@tanstack/react-table';
+import { type Cell as TableCell } from '@tanstack/react-table';
 import type { GridRow } from '../types/grid.types';
 import { useGridSelection } from '../hooks/useGridSelection';
 
@@ -13,6 +13,7 @@ function CellView({ cell, rowId }: Props) {
 
   const columnId = cell.column.id;
   const isSelected = selectedCell?.rowId === rowId && selectedCell.columnId === columnId;
+  const isEvenRow = cell.row.index % 2 === 0;
 
   const onClick = useCallback(() => {
     selectCell({ rowId, columnId });
@@ -23,11 +24,11 @@ function CellView({ cell, rowId }: Props) {
       role="gridcell"
       onClick={onClick}
       className={`truncate border-b border-r border-slate-200 px-3 py-2 text-sm ${
-        isSelected ? 'bg-blue-50 ring-1 ring-blue-400' : 'bg-white'
+        isSelected ? 'bg-blue-50 ring-1 ring-blue-400' : isEvenRow ? 'bg-white' : 'bg-slate-50/70'
       }`}
       style={{ width: cell.column.getSize() }}
     >
-      {flexRender(cell.column.columnDef.cell ?? cell.column.columnDef.header, cell.getContext())}
+      {String(cell.getValue() ?? '')}
     </div>
   );
 }

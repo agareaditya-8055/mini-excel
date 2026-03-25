@@ -25,16 +25,20 @@ function VirtualizedBodyView({ bodyHeight, rowVirtualizer, tableRows, containerR
   return (
     <div
       ref={containerRef}
-      className="relative overflow-auto"
+      className="relative overflow-auto bg-white"
       style={{ height: bodyHeight }}
       onScroll={onScroll}
     >
-      <div style={{ height: rowVirtualizer.getTotalSize(), position: 'relative' }}>
-        {rowVirtualizer.getVirtualItems().map((virtualRow) => {
-          const row = tableRows[virtualRow.index];
-          return <Row key={row.id} row={row} top={virtualRow.start} />;
-        })}
-      </div>
+      {tableRows.length === 0 ? (
+        <div className="grid h-full place-items-center text-sm text-slate-500">No rows match the current filter.</div>
+      ) : (
+        <div style={{ height: rowVirtualizer.getTotalSize(), position: 'relative' }}>
+          {rowVirtualizer.getVirtualItems().map((virtualRow) => {
+            const row = tableRows[virtualRow.index];
+            return <Row key={row.id} row={row} top={virtualRow.start} />;
+          })}
+        </div>
+      )}
     </div>
   );
 }
