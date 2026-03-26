@@ -10,4 +10,19 @@ export const useGridDataStore = create<GridDataState>((set) => ({
   setColumns: (columns) => set({ columns }),
   setSorting: (sorting) => set({ sorting }),
   setFilter: (filter) => set({ filter }),
+  updateCell: (rowId, columnId, value) =>
+    set((state) => ({
+      rows: state.rows.map((row) => {
+        if (row.id !== rowId) {
+          return row;
+        }
+
+        if (columnId === 'score') {
+          const numeric = Number(value);
+          return { ...row, score: Number.isFinite(numeric) ? numeric : row.score };
+        }
+
+        return { ...row, [columnId]: value };
+      }),
+    })),
 }));

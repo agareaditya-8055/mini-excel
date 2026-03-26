@@ -23,7 +23,7 @@ function CellView({ cell, rowId }: Props) {
     <div
       role="gridcell"
       onClick={onClick}
-      className={`truncate border-b border-r border-slate-200 px-3 py-2 text-sm ${
+      className={`cursor-cell truncate border-b border-r border-slate-200 px-3 py-2 text-sm ${
         isSelected ? 'bg-blue-50 ring-1 ring-blue-400' : isEvenRow ? 'bg-white' : 'bg-slate-50/70'
       }`}
       style={{ width: cell.column.getSize(), minWidth: 120, flexGrow: 1, flexShrink: 0 }}

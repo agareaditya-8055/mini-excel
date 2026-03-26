@@ -27,6 +27,7 @@ export type GridDataState = {
   setColumns: (columns: GridColumn[]) => void;
   setSorting: (sorting: SortingState) => void;
   setFilter: (filter: GridFilterState) => void;
+  updateCell: (rowId: string, columnId: keyof GridRow, value: string) => void;
 };
 
 export type CellPosition = {

@@ -1,19 +1,25 @@
-import { memo, useCallback, type RefObject, type UIEvent } from 'react';
+import { memo, useCallback, useRef, type UIEvent } from 'react';
 import type { Row as TableRow } from '@tanstack/react-table';
-import type { Virtualizer } from '@tanstack/react-virtual';
+import { useVirtualizer } from '@tanstack/react-virtual';
 import type { GridRow } from '../types/grid.types';
 import { Row } from './Row';
 import { useGridUIStore } from '../stores/gridUI.store';
 
 type Props = {
   bodyHeight: number;
-  rowVirtualizer: Virtualizer<HTMLDivElement, Element>;
+  rowHeight: number;
   tableRows: TableRow<GridRow>[];
-  containerRef: RefObject<HTMLDivElement>;
 };
 
-function VirtualizedBodyView({ bodyHeight, rowVirtualizer, tableRows, containerRef }: Props) {
+function VirtualizedBodyView({ bodyHeight, rowHeight, tableRows }: Props) {
   const setScrollTop = useGridUIStore((state) => state.setScrollTop);
+  const parentRef = useRef<HTMLDivElement | null>(null);
+  const rowVirtualizer = useVirtualizer({
+    count: tableRows.length,
+    getScrollElement: () => parentRef.current,
+    estimateSize: () => rowHeight,
+    overscan: 18,
+  });
 
   const onScroll = useCallback(
     (event: UIEvent<HTMLDivElement>) => {
@@ -24,7 +30,7 @@ function VirtualizedBodyView({ bodyHeight, rowVirtualizer, tableRows, containerR
 
   return (
     <div
-      ref={containerRef}
+      ref={parentRef}
       className="relative overflow-auto bg-white"
       style={{ height: bodyHeight }}
       onScroll={onScroll}
@@ -35,6 +41,9 @@ function VirtualizedBodyView({ bodyHeight, rowVirtualizer, tableRows, containerR
         <div style={{ height: rowVirtualizer.getTotalSize(), position: 'relative' }}>
           {rowVirtualizer.getVirtualItems().map((virtualRow) => {
             const row = tableRows[virtualRow.index];
+            if (!row) {
+              return null;
+            }
             return <Row key={row.id} row={row} top={virtualRow.start} />;
           })}
         </div>

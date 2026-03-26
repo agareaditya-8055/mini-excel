@@ -1,5 +1,4 @@
-import { useEffect, useMemo, useRef } from 'react';
-import { useVirtualizer } from '@tanstack/react-virtual';
+import { useMemo } from 'react';
 import {
   getCoreRowModel,
   getFilteredRowModel,
@@ -30,25 +29,12 @@ export function useVirtualGrid() {
     getFilteredRowModel: getFilteredRowModel(),
   });
 
-  const containerRef = useRef<HTMLDivElement | null>(null);
   const tableRows = table.getRowModel().rows;
-
-  const rowVirtualizer = useVirtualizer({
-    count: tableRows.length,
-    getScrollElement: () => containerRef.current,
-    estimateSize: () => ROW_HEIGHT,
-    overscan: 12,
-  });
-
-  useEffect(() => {
-    rowVirtualizer.measure();
-  }, [rowVirtualizer, tableRows.length]);
 
   return {
     table,
     tableRows,
-    containerRef,
-    rowVirtualizer,
     bodyHeight: GRID_BODY_HEIGHT,
+    rowHeight: ROW_HEIGHT,
   };
 }
