@@ -1,11 +1,11 @@
 import { useDeferredValue, useEffect, useMemo, useState } from 'react';
-import { Header } from './Header';
 import { VirtualizedBody } from './VirtualizedBody';
 import { useVirtualGrid } from '../hooks/useVirtualGrid';
 import { useGridDataStore } from '../stores/gridData.store';
 import { useGridKeyboard } from '../hooks/useGridKeyboard';
 import { useGridUIStore } from '../stores/gridUI.store';
 import type { GridRow } from '../types/grid.types';
+import { SCORE_RANGE_OPTIONS } from '../constants/grid.constants';
 
 export function Grid() {
   const filter = useGridDataStore((state) => state.filter);
@@ -17,15 +17,14 @@ export function Grid() {
   const hasColumns = table.getAllLeafColumns().length > 0;
   const [draftFilter, setDraftFilter] = useState(filter.query);
   const deferredFilter = useDeferredValue(draftFilter);
-  const activeColumnId = filter.columnId;
   const selectedCell = useGridUIStore((state) => state.selectedCell);
   const [formulaValue, setFormulaValue] = useState('');
   const selectedRow = selectedCell ? tableRows.find((row) => row.id === selectedCell.rowId) : undefined;
   const selectedColumn = selectedCell?.columnId as keyof GridRow | undefined;
 
   useEffect(() => {
-    setFilter({ query: deferredFilter, columnId: activeColumnId });
-  }, [activeColumnId, deferredFilter, setFilter]);
+    setFilter({ query: deferredFilter, scoreRanges: filter.scoreRanges });
+  }, [deferredFilter, filter.scoreRanges, setFilter]);
 
   useEffect(() => {
     if (!selectedRow || !selectedColumn) {
@@ -52,11 +51,7 @@ export function Grid() {
               updateCell(selectedCell.rowId, selectedColumn, formulaValue);
             }
           }}
-          onBlur={() => {
-            if (selectedCell && selectedColumn) {
-              updateCell(selectedCell.rowId, selectedColumn, formulaValue);
-            }
-          }}
+          onBlur={() => setFormulaValue(selectedRow && selectedColumn ? String(selectedRow.original[selectedColumn]) : '')}
           disabled={!selectedCell}
           placeholder="Select a cell to edit its value"
           className="rounded border border-slate-300 bg-white px-3 py-1.5 text-sm outline-none ring-blue-500 focus:ring-2 disabled:bg-slate-100"
@@ -69,26 +64,42 @@ export function Grid() {
           placeholder="Search values..."
           className="w-full max-w-sm rounded-md border border-slate-300 bg-white px-3 py-2 text-sm outline-none ring-blue-500 transition-shadow focus:shadow-sm focus:ring-2"
         />
-        <select
-          className="rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-700 outline-none ring-blue-500 focus:ring-2"
-          value={activeColumnId}
-          onChange={(event) => setFilter({ query: draftFilter, columnId: event.target.value as typeof filter.columnId })}
-        >
-          <option value="all">All Columns</option>
-          {table.getAllLeafColumns().map((column) => (
-            <option key={column.id} value={column.id}>
-              {String(column.columnDef.header)}
-            </option>
-          ))}
-        </select>
+        <div className="flex flex-wrap items-center gap-2">
+          {SCORE_RANGE_OPTIONS.map((range) => {
+            const checked = filter.scoreRanges.includes(range.id);
+            return (
+              <label
+                key={range.id}
+                className={`cursor-pointer rounded-md border px-2 py-1 text-xs font-medium ${
+                  checked
+                    ? 'border-blue-500 bg-blue-50 text-blue-700'
+                    : 'border-slate-300 bg-white text-slate-700 hover:bg-slate-100'
+                }`}
+              >
+                <input
+                  type="checkbox"
+                  className="mr-1 align-middle"
+                  checked={checked}
+                  onChange={(event) => {
+                    const nextRanges = event.target.checked
+                      ? [...filter.scoreRanges, range.id]
+                      : filter.scoreRanges.filter((id) => id !== range.id);
+                    setFilter({ query: draftFilter, scoreRanges: nextRanges });
+                  }}
+                />
+                Score {range.label}
+              </label>
+            );
+          })}
+        </div>
         <button
           type="button"
           className="rounded-md border border-slate-300 bg-white px-3 py-2 text-xs font-medium text-slate-700 hover:bg-slate-100"
           onClick={() => {
             setDraftFilter('');
-            setFilter({ query: '', columnId: activeColumnId });
+            setFilter({ query: '', scoreRanges: [] });
           }}
-          disabled={!draftFilter}
+          disabled={!draftFilter && filter.scoreRanges.length === 0}
         >
           Clear
         </button>
@@ -99,8 +110,8 @@ export function Grid() {
       </div>
       {hasColumns ? (
         <div role="grid" tabIndex={0} onKeyDown={onKeyDown} className="outline-none">
-          <Header table={table} />
           <VirtualizedBody
+            table={table}
             bodyHeight={bodyHeight}
             rowHeight={rowHeight}
             tableRows={tableRows}

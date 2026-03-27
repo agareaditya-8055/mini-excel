@@ -5,7 +5,7 @@ export const useGridDataStore = create<GridDataState>((set) => ({
   rows: [],
   columns: [],
   sorting: [],
-  filter: { query: '', columnId: 'all' },
+  filter: { query: '', scoreRanges: [] },
   setRows: (rows) => set({ rows }),
   setColumns: (columns) => set({ columns }),
   setSorting: (sorting) => set({ sorting }),

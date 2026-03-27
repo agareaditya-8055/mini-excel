@@ -15,7 +15,7 @@ export type GridColumn = ColumnDef<GridRow>;
 
 export type GridFilterState = {
   query: string;
-  columnId: 'all' | keyof GridRow;
+  scoreRanges: string[];
 };
 
 export type GridDataState = {

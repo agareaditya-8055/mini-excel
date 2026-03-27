@@ -1,17 +1,19 @@
 import { memo, useCallback, useRef, type UIEvent } from 'react';
-import type { Row as TableRow } from '@tanstack/react-table';
+import type { Row as TableRow, Table } from '@tanstack/react-table';
 import { useVirtualizer } from '@tanstack/react-virtual';
 import type { GridRow } from '../types/grid.types';
 import { Row } from './Row';
 import { useGridUIStore } from '../stores/gridUI.store';
+import { Header } from './Header';
 
 type Props = {
+  table: Table<GridRow>;
   bodyHeight: number;
   rowHeight: number;
   tableRows: TableRow<GridRow>[];
 };
 
-function VirtualizedBodyView({ bodyHeight, rowHeight, tableRows }: Props) {
+function VirtualizedBodyView({ table, bodyHeight, rowHeight, tableRows }: Props) {
   const setScrollTop = useGridUIStore((state) => state.setScrollTop);
   const parentRef = useRef<HTMLDivElement | null>(null);
   const rowVirtualizer = useVirtualizer({
@@ -42,6 +44,7 @@ function VirtualizedBodyView({ bodyHeight, rowHeight, tableRows }: Props) {
       style={{ height: bodyHeight }}
       onScroll={onScroll}
     >
+      <Header table={table} />
       {tableRows.length === 0 ? (
         <div className="grid h-full place-items-center text-sm text-slate-500">No rows match the current filter.</div>
       ) : (
