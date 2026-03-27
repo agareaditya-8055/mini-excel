@@ -23,7 +23,14 @@ export function useVirtualGrid() {
     columns,
     getRowId: (row) => row.id,
     state: { sorting },
-    onSortingChange: setSorting,
+    onSortingChange: (updater) => {
+      if (typeof updater === 'function') {
+        setSorting(updater(sorting));
+        return;
+      }
+
+      setSorting(updater);
+    },
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),
     getFilteredRowModel: getFilteredRowModel(),

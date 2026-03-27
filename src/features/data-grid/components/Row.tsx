@@ -5,16 +5,11 @@ import { Cell } from './Cell';
 
 type Props = {
   row: TableRow<GridRow>;
-  top: number;
 };
 
-function RowView({ row, top }: Props) {
+function RowView({ row }: Props) {
   return (
-    <div
-      role="row"
-      className="absolute left-0 flex w-full"
-      style={{ transform: `translateY(${top}px)`, height: 40 }}
-    >
+    <div role="row" className="flex w-full" style={{ height: 40 }}>
       {row.getVisibleCells().map((cell) => (
         <Cell key={cell.id} cell={cell} rowId={row.id} />
       ))}
