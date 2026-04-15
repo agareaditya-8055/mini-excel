@@ -11,6 +11,8 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
+    "@axiomui/components": "^0.3.1",
+    "@axiomui/tokens": "^0.3.1",
     "@tanstack/react-table": "^8.21.3",
     "@tanstack/react-virtual": "^3.11.1",
     "react": "^18.3.1",
